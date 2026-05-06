@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FastChat</string>
+    <string name="add_template_btn">+ Add Template</string>
+</resources>
