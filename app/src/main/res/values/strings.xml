@@ -11,20 +11,12 @@
     <string name="keep">Keep</string>
     <string name="template_removed">Template removed</string>
     <string name="open_with">Open with:</string>
-    <string name="whatsapp_std">WhatsApp</string>
-    <string name="whatsapp_biz">Business</string>
+    <string name="whatsapp_std">Standard WhatsApp</string>
+    <string name="whatsapp_biz">WhatsApp Business</string>
     <string name="chat_with_hint">Chat with %s?</string>
     <string name="err_invalid_phone">Enter a valid phone number</string>
     <string name="err_no_whatsapp">WhatsApp not installed</string>
     <string name="perm_denied_permanently">Permission permanently denied.\nTap here to fix in Settings.</string>
     <string name="perm_rationale">History helps you chat faster.\nPlease enable permission.</string>
     <string name="default_country_code">+91</string>
-    <string name="label_gazi">Gazi</string>
-    <string name="label_chat">Chat</string>
-    <string name="label_premium">PREMIUM</string>
-    <string name="hint_enter_number">Enter WhatsApp Number</string>
-    <string name="hint_phone_number">Phone number</string>
-    <string name="hint_message">Pre-fill a message (Optional)</string>
-    <string name="swipe_history">Swipe up for Recent Calls</string>
-    <string name="no_history">No history found</string>
 </resources>

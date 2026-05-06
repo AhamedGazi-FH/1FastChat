@@ -464,13 +464,24 @@ class MainActivity : AppCompatActivity() {
     }
     inner class CallLogAdapter(var items: List<CallItem> = emptyList(), val onClick: (String) -> Unit) : RecyclerView.Adapter<CallLogAdapter.VH>() {
         inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-            val name: TextView = v.findViewById(R.id.tvNameOrNumber)
+            val tvName: TextView = v.findViewById(R.id.tvName)
+            val tvNumber: TextView = v.findViewById(R.id.tvNumber)
             val date: TextView = v.findViewById(R.id.tvDate)
         }
         override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(LayoutInflater.from(p.context).inflate(R.layout.item_call_log, p, false))
         override fun onBindViewHolder(h: VH, pos: Int) {
             val item = items[pos]
-            h.name.text = if (item.name == "Unknown") item.number else "${item.name} (${item.number})"
+
+            // Expert Data Separation Logic
+            if (item.name == "Unknown") {
+                h.tvName.text = item.number
+                h.tvNumber.visibility = View.GONE
+            } else {
+                h.tvName.text = item.name
+                h.tvNumber.text = item.number
+                h.tvNumber.visibility = View.VISIBLE
+            }
+
             h.date.text = item.date
             h.itemView.setOnClickListener { onClick(item.number) }
         }
