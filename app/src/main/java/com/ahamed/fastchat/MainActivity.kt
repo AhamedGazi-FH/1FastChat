@@ -14,7 +14,6 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Patterns
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
@@ -113,7 +112,6 @@ class MainActivity : AppCompatActivity() {
         emptyState = findViewById(R.id.emptyState)
         tvEmptyMsg = findViewById(R.id.tvEmptyMsg)
 
-        // Connect the Bottom Sheet Behavior
         val bottomSheet = findViewById<View>(R.id.bottomSheet)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
@@ -157,11 +155,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        // Dual Button Logic
         btnWhatsApp.setOnClickListener { processManualInput(isBusiness = false) }
         btnBusiness.setOnClickListener { processManualInput(isBusiness = true) }
 
-        // Back Button Interceptor for the Call History Drawer
+        findViewById<View>(R.id.btnTopHistory)?.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ||
@@ -254,10 +254,13 @@ class MainActivity : AppCompatActivity() {
         dialog.window?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             ?.setBackgroundResource(android.R.color.transparent)
 
-        view.findViewById<TextView>(R.id.tvDialogNumber).text = formattedNumber
-
+        val tvDialogNumber = view.findViewById<TextView>(R.id.tvDialogNumber)
         val etDialogMessage = view.findViewById<TextInputEditText>(R.id.etDialogMessage)
         val dialogTemplateChipGroup = view.findViewById<ChipGroup>(R.id.dialogTemplateChipGroup)
+        val btnDialogWhatsApp = view.findViewById<MaterialButton>(R.id.btnDialogWhatsApp)
+        val btnDialogBusiness = view.findViewById<MaterialButton>(R.id.btnDialogBusiness)
+
+        tvDialogNumber.text = formattedNumber
 
         val defaultTemplates = setOf("Hello 👋", "Send Price List 📄")
         val templates = prefs.getStringSet("templates", defaultTemplates) ?: defaultTemplates
@@ -270,17 +273,17 @@ class MainActivity : AppCompatActivity() {
                     triggerHaptic(HapticFeedbackConstants.CLOCK_TICK)
                 }
             }
-            dialogTemplateChipGroup?.addView(chip)
+            dialogTemplateChipGroup.addView(chip)
         }
 
-        view.findViewById<MaterialButton>(R.id.btnDialogWhatsApp).setOnClickListener {
+        btnDialogWhatsApp.setOnClickListener {
             dialog.dismiss()
-            openWhatsAppFinal(cc, cleanNumber, isBusiness = false, customMessage = etDialogMessage?.text.toString())
+            openWhatsAppFinal(cc, cleanNumber, isBusiness = false, customMessage = etDialogMessage.text.toString())
         }
 
-        view.findViewById<MaterialButton>(R.id.btnDialogBusiness).setOnClickListener {
+        btnDialogBusiness.setOnClickListener {
             dialog.dismiss()
-            openWhatsAppFinal(cc, cleanNumber, isBusiness = true, customMessage = etDialogMessage?.text.toString())
+            openWhatsAppFinal(cc, cleanNumber, isBusiness = true, customMessage = etDialogMessage.text.toString())
         }
 
         dialog.show()
@@ -456,24 +459,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     data class CallItem(val name: String, val number: String, val date: String)
+
     class CallDiff(private val old: List<CallItem>, private val new: List<CallItem>) : DiffUtil.Callback() {
         override fun getOldListSize() = old.size
         override fun getNewListSize() = new.size
         override fun areItemsTheSame(o: Int, n: Int) = old[o].number == new[n].number
         override fun areContentsTheSame(o: Int, n: Int) = old[o] == new[n]
     }
+
     inner class CallLogAdapter(var items: List<CallItem> = emptyList(), val onClick: (String) -> Unit) : RecyclerView.Adapter<CallLogAdapter.VH>() {
+
         inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-            val name: TextView = v.findViewById(R.id.tvNameOrNumber)
+            val tvName: TextView = v.findViewById(R.id.tvName)
+            val tvNumber: TextView = v.findViewById(R.id.tvNumber)
             val date: TextView = v.findViewById(R.id.tvDate)
         }
+
         override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(LayoutInflater.from(p.context).inflate(R.layout.item_call_log, p, false))
+
         override fun onBindViewHolder(h: VH, pos: Int) {
             val item = items[pos]
-            h.name.text = if (item.name == "Unknown") item.number else "${item.name} (${item.number})"
+
+            if (item.name == "Unknown") {
+                h.tvName.text = item.number
+                h.tvNumber.visibility = View.GONE
+            } else {
+                h.tvName.text = item.name
+                h.tvNumber.text = item.number
+                h.tvNumber.visibility = View.VISIBLE
+            }
+
             h.date.text = item.date
             h.itemView.setOnClickListener { onClick(item.number) }
         }
+
         override fun getItemCount() = items.size
     }
 }
