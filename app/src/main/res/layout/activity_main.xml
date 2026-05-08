@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#F8F9FA"
     android:fitsSystemWindows="true">
 
     <androidx.core.widget.NestedScrollView
@@ -17,11 +17,11 @@
             android:layout_height="wrap_content"
             android:paddingBottom="100dp">
 
-            <!-- Top Bar (Gazi Premium Branding & Top History Button) -->
+            <!-- Top Bar -->
             <LinearLayout
                 android:id="@+id/topBar"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="72dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="24dp"
@@ -33,26 +33,25 @@
                     android:layout_height="wrap_content"
                     android:text="Gazi"
                     android:textColor="#111111"
-                    android:textSize="22sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    android:letterSpacing="-0.02" />
+                    android:letterSpacing="-0.03" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Chat"
                     android:textColor="#25D366"
-                    android:textSize="22sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    android:letterSpacing="-0.02" />
+                    android:letterSpacing="-0.03" />
 
-                <!-- Spacer -->
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <!-- NEW: Top History Button -->
+                <!-- Sleek Top History Button -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnTopHistory"
                     android:layout_width="wrap_content"
@@ -60,17 +59,18 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#F5F5F5"
-                    app:cardCornerRadius="8dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="30dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="0dp">
+                    app:strokeColor="#EAEAEA"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingHorizontal="12dp"
+                        android:paddingHorizontal="14dp"
                         android:paddingVertical="8dp">
 
                         <TextView
@@ -84,121 +84,129 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="History"
-                            android:textColor="#111111"
-                            android:textSize="13sp"
+                            android:textColor="#424242"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- Hero Section (Thumb Zone + Linear Flow) -->
+            <!-- Hero Section -->
             <LinearLayout
                 android:id="@+id/heroSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topBar"
-                app:layout_constraintVertical_bias="0.45"
+                app:layout_constraintVertical_bias="0.35"
                 app:layout_constraintVertical_chainStyle="packed">
 
-                <!-- Clipboard Suggestion -->
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipClipboard"
                     style="@style/Widget.Material3.Chip.Assist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="24dp"
                     android:visibility="gone"
-                    tools:text="Paste: +91 9876543210"
+                    app:chipBackgroundColor="#E8F9EE"
+                    app:chipStrokeWidth="0dp"
+                    android:textColor="#075E54"
+                    tools:text="Tap to paste: +91 9876543210"
                     tools:visibility="visible" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="Enter WhatsApp Number"
-                    android:textColor="#757575"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textAllCaps="true"
-                    android:letterSpacing="0.05"/>
+                    android:layout_marginStart="4dp"
+                    android:text="Start a conversation"
+                    android:textColor="#70757A"
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif-medium"/>
 
-                <!-- THE HERO CARD: Massive Focus on the Phone Number -->
+                <!-- THE HERO CARD -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="24dp"
-                    app:cardElevation="8dp"
+                    app:cardElevation="0dp"
                     app:cardBackgroundColor="#FFFFFF"
-                    app:strokeColor="#E8F9EE"
-                    app:strokeWidth="2dp">
+                    app:strokeColor="#EAEAEA"
+                    app:strokeWidth="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingHorizontal="20dp"
-                        android:paddingVertical="16dp">
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
 
-                        <AutoCompleteTextView
-                            android:id="@+id/actvCountryCode"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:gravity="center"
-                            android:inputType="none"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:minWidth="70dp"
-                            android:padding="0dp"
-                            android:textColor="#111111"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
-                            tools:text="+91" />
+                            android:background="@drawable/bg_country_code_pill"
+                            android:backgroundTint="#F1F3F4"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="8dp">
 
-                        <View
-                            android:layout_width="2dp"
-                            android:layout_height="36dp"
-                            android:layout_marginHorizontal="12dp"
-                            android:background="#EEEEEE" />
+                            <!-- Dropdown Width Fixed Here -->
+                            <AutoCompleteTextView
+                                android:id="@+id/actvCountryCode"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:dropDownWidth="120dp"
+                                android:gravity="center"
+                                android:inputType="none"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:minWidth="40dp"
+                                android:padding="0dp"
+                                android:textColor="#111111"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                tools:text="+91" />
+                        </LinearLayout>
 
                         <EditText
                             android:id="@+id/etPhoneNumber"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:layout_marginStart="16dp"
                             android:background="@null"
                             android:hint="Phone number"
                             android:inputType="phone"
                             android:padding="0dp"
                             android:textColor="#111111"
-                            android:textColorHint="#CCCCCC"
-                            android:textSize="28sp"
-                            android:textStyle="bold">
-                            <!-- This instantly draws the user's eye and keyboard -->
+                            android:textColorHint="#BDBDBD"
+                            android:textSize="32sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.02">
                             <requestFocus />
                         </EditText>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- SECONDARY: Message Input -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilMessage"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:hint="Pre-fill a message (Optional)"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusTopStart="16dp"
-                    app:boxStrokeColor="#D0D0D0"
+                    android:layout_marginTop="16dp"
+                    android:hint="Add a quick message..."
+                    app:boxBackgroundColor="#FFFFFF"
+                    app:boxCornerRadiusBottomEnd="20dp"
+                    app:boxCornerRadiusBottomStart="20dp"
+                    app:boxCornerRadiusTopEnd="20dp"
+                    app:boxCornerRadiusTopStart="20dp"
+                    app:boxStrokeColor="#EAEAEA"
                     app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
                     app:endIconMode="clear_text"
                     app:hintTextColor="#9E9E9E">
 
@@ -208,64 +216,63 @@
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
                         android:maxLines="3"
+                        android:padding="16dp"
                         android:textColor="#111111"
                         android:textSize="16sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Template Chips -->
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
                     android:scrollbars="none">
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/templateChipGroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="8dp"
                         app:singleLine="true" />
                 </HorizontalScrollView>
 
-                <!-- Action Buttons -->
+                <!-- THE 80/20 EXPERT WORKFLOW: Stacked Buttons -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnWhatsApp"
-                        android:layout_width="0dp"
-                        android:layout_height="64dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        android:elevation="0dp"
-                        android:text="WhatsApp"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        android:textSize="17sp"
-                        android:textStyle="bold"
-                        app:backgroundTint="#25D366"
-                        app:cornerRadius="16dp" />
-
+                    <!-- The 80% Hero Button: WA Business (Massive & Bright Green) -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnBusiness"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="64dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
                         android:elevation="0dp"
-                        android:text="Business"
+                        android:text="Open WA Business"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#25D366"
+                        app:cornerRadius="20dp" />
+
+                    <!-- The 20% Secondary Button: Normal WhatsApp (Subtle & Light) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnWhatsApp"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="12dp"
+                        android:elevation="0dp"
+                        android:text="Use Standard WhatsApp"
                         android:textAllCaps="false"
                         android:textColor="#075E54"
-                        android:textSize="17sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         app:backgroundTint="#E8F9EE"
                         app:cornerRadius="16dp" />
                 </LinearLayout>
 
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -274,32 +281,36 @@
         android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F9F9F9"
-        android:elevation="24dp"
+        android:background="@drawable/bg_bottom_sheet"
+        android:backgroundTint="#FFFFFF"
+        android:elevation="32dp"
         android:orientation="vertical"
-        app:behavior_peekHeight="70dp"
+        app:behavior_peekHeight="75dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
-            android:layout_width="32dp"
-            android:layout_height="4dp"
+            android:layout_width="40dp"
+            android:layout_height="5dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="12dp"
-            android:background="#D1D1D1" />
+            android:background="@drawable/bg_country_code_pill"
+            android:backgroundTint="#E0E0E0" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="16dp"
-            android:text="Swipe up for Recent Calls"
-            android:textColor="#9E9E9E"
-            android:textSize="14sp"
+            android:paddingTop="12dp"
+            android:paddingBottom="20dp"
+            android:text="Recent Calls"
+            android:textColor="#111111"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#F8F9FA">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCallLog"
@@ -307,7 +318,7 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="8dp"
+                android:paddingTop="12dp"
                 android:paddingBottom="40dp" />
 
             <LinearLayout

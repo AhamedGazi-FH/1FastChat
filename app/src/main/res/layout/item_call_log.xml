@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="12dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="#FFFFFF"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
-    app:strokeColor="#F0F0F0"
+    app:strokeColor="#EAEAEA"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -20,7 +20,23 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="14dp">
+        android:paddingVertical="16dp">
+
+        <!-- Elegant Phone Icon Background -->
+        <LinearLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_country_code_pill"
+            android:backgroundTint="#F1F3F4"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📞"
+                android:textSize="18sp" />
+        </LinearLayout>
 
         <!-- Primary Content (Name & Number) -->
         <LinearLayout
@@ -33,23 +49,23 @@
                 android:id="@+id/tvName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="#111111"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end"
-                tools:text="John Doe" />
+                tools:text="Unknown Caller" />
 
             <TextView
                 android:id="@+id/tvNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="#757575"
                 android:textSize="14sp"
-                android:maxLines="1"
-                android:ellipsize="end"
-                tools:text="+1 234 567 890" />
+                tools:text="+91 9876543210" />
         </LinearLayout>
 
         <!-- Secondary Content (Date/Time) -->
@@ -57,7 +73,7 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="8dp"
             android:textColor="#9E9E9E"
             android:textSize="12sp"
             tools:text="Today, 14:30" />

@@ -21,13 +21,19 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // 1. Turns on the aggressive code deletion
+            isMinifyEnabled = true
+
+            // 2. Deletes unused images, colors, and XML files
+            isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

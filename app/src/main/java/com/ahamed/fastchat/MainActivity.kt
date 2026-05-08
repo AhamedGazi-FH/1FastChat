@@ -1,8 +1,8 @@
 package com.ahamed.fastchat
 
 import android.Manifest
-import android.content.ClipboardManager
 import android.content.ClipDescription
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -158,18 +158,34 @@ class MainActivity : AppCompatActivity() {
         btnWhatsApp.setOnClickListener { processManualInput(isBusiness = false) }
         btnBusiness.setOnClickListener { processManualInput(isBusiness = true) }
 
+        // FIX 2: Hide keyboard and clear cursor when Top History button is clicked
         findViewById<View>(R.id.btnTopHistory)?.setOnClickListener {
+            hideKeyboard()
+            etPhoneNumber.clearFocus()
+            etMessage.clearFocus()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
+        // FIX 2: Hide keyboard and clear cursor when user SWIPES up the bottom sheet
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    hideKeyboard()
+                    etPhoneNumber.clearFocus()
+                    etMessage.clearFocus()
+                }
+            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+
+        // FIX 1: Flawless Back Button Logic
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ||
                     bottomSheetBehavior.state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
+                    finish() // Exit the app cleanly without permanently breaking the back button
                 }
             }
         })
@@ -438,11 +454,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard() {
-        val view = this.currentFocus
-        if (view != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
+        // Bulletproof keyboard hiding: Fallback to decorView if currentFocus is null
+        val view = this.currentFocus ?: window.decorView
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun triggerHaptic(effect: Int) { window.decorView.performHapticFeedback(effect) }
