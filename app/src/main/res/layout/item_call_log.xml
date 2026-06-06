@@ -8,10 +8,10 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardBackgroundColor="@color/surface"
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
-    app:strokeColor="#EAEAEA"
+    app:strokeColor="@color/outline"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -20,25 +20,28 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp">
+        android:paddingVertical="14dp">
 
-        <!-- Elegant Phone Icon Background -->
-        <LinearLayout
+        <!-- Icon Background -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/bg_country_code_pill"
-            android:backgroundTint="#F1F3F4"
-            android:gravity="center">
+            app:cardBackgroundColor="@color/chip_background"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📞"
-                android:textSize="18sp" />
-        </LinearLayout>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_menu_call"
+                app:tint="@color/primary_dark"
+                android:contentDescription="Call Icon" />
+        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Primary Content (Name & Number) -->
+        <!-- Primary Content -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -51,31 +54,32 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="#111111"
-                android:textSize="17sp"
-                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"
                 tools:text="Unknown Caller" />
 
             <TextView
                 android:id="@+id/tvNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="1dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="#757575"
-                android:textSize="14sp"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
                 tools:text="+91 9876543210" />
         </LinearLayout>
 
-        <!-- Secondary Content (Date/Time) -->
+        <!-- Date/Time -->
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textColor="#9E9E9E"
-            android:textSize="12sp"
+            android:textColor="@color/text_tertiary"
+            android:textSize="11sp"
+            android:fontFamily="sans-serif"
             tools:text="Today, 14:30" />
 
     </LinearLayout>

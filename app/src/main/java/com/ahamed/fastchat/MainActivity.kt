@@ -1,8 +1,8 @@
 package com.ahamed.fastchat
 
 import android.Manifest
-import android.content.ClipDescription
 import android.content.ClipboardManager
+import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -20,7 +20,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.TextView
@@ -42,7 +41,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,7 +57,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var actvCountryCode: AutoCompleteTextView
     private lateinit var btnWhatsApp: MaterialButton
     private lateinit var btnBusiness: MaterialButton
-    private lateinit var templateChipGroup: ChipGroup
+    private lateinit var btnOpenTemplates: MaterialButton
+    private lateinit var btnRefreshHistory: View
     private lateinit var rvCallLog: RecyclerView
     private lateinit var chipClipboard: Chip
     private lateinit var emptyState: View
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity() {
 
         initViewBindings()
         initCountryCodePicker()
-        refreshTemplateChips()
         setupListeners()
         syncStateWithPermission()
     }
@@ -106,7 +104,8 @@ class MainActivity : AppCompatActivity() {
         actvCountryCode = findViewById(R.id.actvCountryCode)
         btnWhatsApp = findViewById(R.id.btnWhatsApp)
         btnBusiness = findViewById(R.id.btnBusiness)
-        templateChipGroup = findViewById(R.id.templateChipGroup)
+        btnOpenTemplates = findViewById(R.id.btnOpenTemplates)
+        btnRefreshHistory = findViewById(R.id.btnRefreshHistory)
         rvCallLog = findViewById(R.id.rvCallLog)
         chipClipboard = findViewById(R.id.chipClipboard)
         emptyState = findViewById(R.id.emptyState)
@@ -120,45 +119,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCountryCodePicker() {
-        val sortedCodes = countryCodes.sortedBy { it.substring(1).toIntOrNull() ?: 0 }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sortedCodes)
-        actvCountryCode.setAdapter(adapter)
-
         actvCountryCode.setOnClickListener { actvCountryCode.showDropDown() }
-        actvCountryCode.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) actvCountryCode.showDropDown() }
-
+        
         val lastCode = prefs.getString("last_country_code", null)
         if (!lastCode.isNullOrEmpty()) actvCountryCode.setText(lastCode, false)
-        else autoDetectCountryCode()
-    }
+        else actvCountryCode.setText("+91", false)
 
-    private fun autoDetectCountryCode() {
-        try {
-            val tm = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-            val iso = tm.networkCountryIso?.uppercase() ?: ""
-            val detected = when (iso) {
-                "US", "CA" -> "+1"
-                "GB" -> "+44"
-                "IN" -> "+91"
-                "AU" -> "+61"
-                "DE" -> "+49"
-                "AE" -> "+971"
-                "SA" -> "+966"
-                else -> "+91"
+        actvCountryCode.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s != null && s.isNotEmpty() && !s.startsWith("+")) {
+                    actvCountryCode.setText("+$s")
+                    actvCountryCode.setSelection(actvCountryCode.text.length)
+                }
             }
-            actvCountryCode.setText(detected, false)
-            prefs.edit { putString("last_country_code", detected) }
-        } catch (_: Exception) {
-            actvCountryCode.setText("+91", false)
-            prefs.edit { putString("last_country_code", "+91") }
-        }
+            override fun afterTextChanged(s: Editable?) {
+                prefs.edit { putString("last_country_code", s?.toString()) }
+            }
+        })
     }
 
     private fun setupListeners() {
         btnWhatsApp.setOnClickListener { processManualInput(isBusiness = false) }
         btnBusiness.setOnClickListener { processManualInput(isBusiness = true) }
 
-        // FIX 2: Hide keyboard and clear cursor when Top History button is clicked
+        // RESTORED: Quick Reply Button Logic
+        btnOpenTemplates.setOnClickListener {
+            hideKeyboard()
+            openTemplateDrawer(etMessage)
+        }
+
         findViewById<View>(R.id.btnTopHistory)?.setOnClickListener {
             hideKeyboard()
             etPhoneNumber.clearFocus()
@@ -166,7 +156,11 @@ class MainActivity : AppCompatActivity() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        // FIX 2: Hide keyboard and clear cursor when user SWIPES up the bottom sheet
+        btnRefreshHistory.setOnClickListener {
+            triggerHaptic(HapticFeedbackConstants.CONTEXT_CLICK)
+            loadCallLog()
+        }
+
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_EXPANDED) {
@@ -178,14 +172,13 @@ class MainActivity : AppCompatActivity() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-        // FIX 1: Flawless Back Button Logic
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ||
                     bottomSheetBehavior.state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 } else {
-                    finish() // Exit the app cleanly without permanently breaking the back button
+                    finish()
                 }
             }
         })
@@ -205,23 +198,82 @@ class MainActivity : AppCompatActivity() {
         etPhoneNumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                etPhoneNumber.error = null // VISUAL FIX: Clears error instantly on typing
                 if (count > 1 && s?.startsWith("+") == true) handleSmartPaste(s.toString())
             }
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
+    // THE MAGIC: Controls the Template Drawer UI
+    private fun openTemplateDrawer(targetEditText: EditText) {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.layout_bottom_sheet_templates, null)
+        dialog.setContentView(view)
+
+        dialog.window?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?.setBackgroundResource(android.R.color.transparent)
+
+        val container = view.findViewById<android.widget.LinearLayout>(R.id.llTemplateContainer)
+        val btnAddNew = view.findViewById<MaterialButton>(R.id.btnAddNewTemplate)
+
+        val defaultTemplates = setOf("Hello 👋", "Send Price List 📄")
+        val templates = prefs.getStringSet("templates", defaultTemplates) ?: defaultTemplates
+
+        templates.sorted().forEach { templateText ->
+            val cardView = layoutInflater.inflate(R.layout.item_template_card, container, false)
+            val tvText = cardView.findViewById<TextView>(R.id.tvTemplateText)
+            val btnDelete = cardView.findViewById<View>(R.id.btnDeleteTemplate)
+
+            tvText.text = templateText
+
+            cardView.setOnClickListener {
+                targetEditText.setText(templateText)
+                triggerHaptic(HapticFeedbackConstants.CLOCK_TICK)
+                dialog.dismiss()
+            }
+
+            btnDelete.setOnClickListener {
+                dialog.dismiss()
+                showDeleteTemplateDialog(templateText)
+            }
+
+            container.addView(cardView)
+        }
+
+        btnAddNew.setOnClickListener {
+            dialog.dismiss()
+            showAddTemplateDialog()
+        }
+
+        dialog.show()
+    }
+
+    // --- SMART 10-DIGIT VALIDATION WITH RED UI ERROR ---
     private fun processManualInput(isBusiness: Boolean) {
         val raw = etPhoneNumber.text?.toString() ?: ""
-        if (raw.length >= 7) {
+        val cc = actvCountryCode.text.toString().filter { it.isDigit() }
+        val clean = raw.filter { it.isDigit() }
+
+        val isValid = if (cc == "91") {
+            clean.length == 10
+        } else {
+            clean.length >= 7
+        }
+
+        if (isValid) {
+            etPhoneNumber.error = null
             hideKeyboard()
             triggerHaptic(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM else HapticFeedbackConstants.VIRTUAL_KEY)
-            val cc = actvCountryCode.text.toString().filter { it.isDigit() }
-            val clean = raw.filter { it.isDigit() }
             openWhatsAppFinal(cc, clean, isBusiness)
         } else {
             triggerHaptic(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.REJECT else HapticFeedbackConstants.LONG_PRESS)
-            Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show()
+
+            val errorMsg = if (cc == "91") "Must be exactly 10 digits" else "Enter a valid number"
+            etPhoneNumber.error = errorMsg
+            etPhoneNumber.requestFocus()
+
+            Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -253,8 +305,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleSmartPaste(text: String) {
         val (cc, cleanNum) = extractCountryCodeAndNumber(text)
-        actvCountryCode.setText("+$cc", false)
-        prefs.edit { putString("last_country_code", "+$cc") }
+        actvCountryCode.setText(if (cc.startsWith("+")) cc else "+$cc")
+        prefs.edit { putString("last_country_code", actvCountryCode.text.toString()) }
         etPhoneNumber.setText(cleanNum)
         etPhoneNumber.setSelection(cleanNum.length)
     }
@@ -272,24 +324,16 @@ class MainActivity : AppCompatActivity() {
 
         val tvDialogNumber = view.findViewById<TextView>(R.id.tvDialogNumber)
         val etDialogMessage = view.findViewById<TextInputEditText>(R.id.etDialogMessage)
-        val dialogTemplateChipGroup = view.findViewById<ChipGroup>(R.id.dialogTemplateChipGroup)
+        val btnDialogTemplates = view.findViewById<MaterialButton>(R.id.btnDialogTemplates)
         val btnDialogWhatsApp = view.findViewById<MaterialButton>(R.id.btnDialogWhatsApp)
         val btnDialogBusiness = view.findViewById<MaterialButton>(R.id.btnDialogBusiness)
 
         tvDialogNumber.text = formattedNumber
 
-        val defaultTemplates = setOf("Hello 👋", "Send Price List 📄")
-        val templates = prefs.getStringSet("templates", defaultTemplates) ?: defaultTemplates
-
-        templates.sorted().forEach { templateText ->
-            val chip = Chip(this, null, com.google.android.material.R.attr.chipStyle).apply {
-                text = templateText
-                setOnClickListener {
-                    etDialogMessage.setText(templateText)
-                    triggerHaptic(HapticFeedbackConstants.CLOCK_TICK)
-                }
-            }
-            dialogTemplateChipGroup.addView(chip)
+        // RESTORED: Wire up the Template Drawer inside the dialog box
+        btnDialogTemplates.setOnClickListener {
+            hideKeyboard()
+            openTemplateDrawer(etDialogMessage)
         }
 
         btnDialogWhatsApp.setOnClickListener {
@@ -324,34 +368,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun refreshTemplateChips() {
-        templateChipGroup.removeAllViews()
-        val addChip = Chip(this).apply {
-            text = "+ Add Message"
-            setChipIconResource(android.R.drawable.ic_input_add)
-            setOnClickListener { showAddTemplateDialog() }
-        }
-        templateChipGroup.addView(addChip)
-
-        val defaultTemplates = setOf("Hello 👋", "Send Price List 📄")
-        val templates = prefs.getStringSet("templates", defaultTemplates) ?: defaultTemplates
-
-        templates.sorted().forEach { templateText ->
-            val chip = Chip(this, null, com.google.android.material.R.attr.chipStyle).apply {
-                text = templateText
-                setOnClickListener {
-                    etMessage.setText(templateText)
-                    triggerHaptic(HapticFeedbackConstants.CLOCK_TICK)
-                }
-                setOnLongClickListener {
-                    showDeleteTemplateDialog(templateText)
-                    true
-                }
-            }
-            templateChipGroup.addView(chip)
-        }
-    }
-
     private fun showAddTemplateDialog() {
         val input = EditText(this).apply {
             hint = "Type your quick message..."
@@ -364,7 +380,7 @@ class MainActivity : AppCompatActivity() {
                     val currentTemplates = prefs.getStringSet("templates", emptySet())?.toMutableSet() ?: mutableSetOf()
                     currentTemplates.add(newText)
                     prefs.edit { putStringSet("templates", currentTemplates) }
-                    refreshTemplateChips()
+                    Toast.makeText(this, "Quick Reply Saved!", Toast.LENGTH_SHORT).show()
                 }
             }.setNegativeButton("Cancel", null).show()
     }
@@ -375,7 +391,7 @@ class MainActivity : AppCompatActivity() {
                 val currentTemplates = prefs.getStringSet("templates", emptySet())?.toMutableSet() ?: mutableSetOf()
                 currentTemplates.remove(template)
                 prefs.edit { putStringSet("templates", currentTemplates) }
-                refreshTemplateChips()
+                Toast.makeText(this, "Quick Reply Deleted", Toast.LENGTH_SHORT).show()
             }.setNegativeButton("Keep", null).show()
     }
 
@@ -454,7 +470,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard() {
-        // Bulletproof keyboard hiding: Fallback to decorView if currentFocus is null
         val view = this.currentFocus ?: window.decorView
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
