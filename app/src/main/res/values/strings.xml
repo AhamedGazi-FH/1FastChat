@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">1 FastChat</string>
+    <string name="app_name">Gazi Chat</string>
     <string name="add_template">+ Add Template</string>
     <string name="new_template">New Template</string>
     <string name="template_hint">Template message</string>

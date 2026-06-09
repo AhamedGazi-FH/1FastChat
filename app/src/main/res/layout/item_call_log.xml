@@ -14,7 +14,9 @@
     app:strokeColor="@color/outline"
     app:strokeWidth="1dp">
 
+    <!-- [4] Gesture-Powered History (Placeholder for Swipe logic in code) -->
     <LinearLayout
+        android:id="@+id/llCallItemRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -37,7 +39,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:src="@android:drawable/ic_menu_call"
-                app:tint="@color/primary_dark"
+                app:tint="@color/primary"
                 android:contentDescription="Call Icon" />
         </com.google.android.material.card.MaterialCardView>
 
@@ -71,12 +73,24 @@
                 tools:text="+91 9876543210" />
         </LinearLayout>
 
+        <!-- [3] One-Click History Chat Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnQuickChat"
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            app:icon="@android:drawable/stat_notify_chat"
+            app:iconTint="@color/primary"
+            app:cornerRadius="12dp"
+            android:contentDescription="Quick Chat" />
+
         <!-- Date/Time -->
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="12dp"
             android:textColor="@color/text_tertiary"
             android:textSize="11sp"
             android:fontFamily="sans-serif"

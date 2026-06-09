@@ -3,21 +3,25 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Primary Brand Colors -->
-    <color name="primary">#25D366</color>
-    <color name="primary_dark">#075E54</color>
-    <color name="primary_container">#E8F9EE</color>
-    <color name="on_primary_container">#00391C</color>
+    <!-- 2026 "Hyper-Clean" Palette -->
+    <!-- Background: Frost Mint (Fresh & Medical Grade) -->
+    <color name="background">#F5F9F8</color>
 
-    <!-- Secondary/Neutral Colors -->
-    <color name="background">#F8F9FA</color>
+    <!-- Surface: High-Purity White -->
     <color name="surface">#FFFFFF</color>
-    <color name="outline">#EAEAEA</color>
-    <color name="text_primary">#111111</color>
-    <color name="text_secondary">#70757A</color>
-    <color name="text_tertiary">#BDBDBD</color>
 
-    <!-- UI Elements -->
-    <color name="chip_background">#F1F3F4</color>
-    <color name="error">#BA1A1A</color>
+    <!-- Primary: Deep Business Teal (High Contrast) -->
+    <color name="primary">#075E54</color>
+    <color name="primary_wa">#25D366</color>
+
+    <!-- Typography: Anthracite (Soft but Deep) -->
+    <color name="text_primary">#111B21</color>
+    <color name="text_secondary">#667781</color>
+    <color name="text_tertiary">#A1ACB2</color>
+
+    <!-- Precision UI Accents -->
+    <color name="outline">#E2E8E7</color> <!-- Machined-metal look -->
+    <color name="chip_background">#EBEDF0</color>
+    <color name="primary_container">#D1EAE7</color>
+    <color name="error">#D32F2F</color>
 </resources>
